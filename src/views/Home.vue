@@ -1,13 +1,17 @@
 <template>
   <div>
-
     <v-list
-      subheader
       two-line
       color="transparent"
     >
-      <v-subheader inset>Employees</v-subheader>
-
+      <v-text-field
+        v-model="search"
+        class="ma-3"
+        placeholder="Search an employee"
+        prepend-inner-icon="mdi-magnify"
+        outlined
+        hide-details
+      />
       <v-list-item
         v-for="employee in employees"
         :key="employee.id"
@@ -37,6 +41,12 @@
       </v-list-item>
     </v-list>
 
+    <v-pagination
+      v-model="page"
+      class="pa-3"
+      :length="nbPages"
+    ></v-pagination>
+
     <v-btn
       color="success"
       fixed
@@ -54,14 +64,29 @@
 import Employee from '@/store/models/Employee'
 import { handleApiError } from '@/lib/apiError'
 
+const ITEMS_PER_PAGE = 10
+
 export default {
   name: 'Home',
   data: () => ({
-    loading: true
+    loading: true,
+    search: '',
+    page: 1
   }),
   computed: {
     employees () {
-      return Employee.all()
+      return Employee.query()
+        .where('employee_name', v => v.includes(this.search))
+        .orderBy('employee_name')
+        .limit(ITEMS_PER_PAGE)
+        .offset((this.page - 1) * ITEMS_PER_PAGE)
+        .get()
+    },
+    nbPages () {
+      const count = Employee.query()
+        .where('employee_name', v => v.includes(this.search))
+        .count()
+      return Math.floor(count / ITEMS_PER_PAGE) + 1
     }
   },
   created () {
