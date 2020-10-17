@@ -35,7 +35,12 @@
 
         <v-list-item-action>
           <v-btn icon>
-            <v-icon color="grey lighten-1">mdi-delete</v-icon>
+            <v-icon
+              color="grey lighten-1"
+              @click.prevent="remove(employee.id)"
+            >
+              mdi-delete
+            </v-icon>
           </v-btn>
         </v-list-item-action>
       </v-list-item>
@@ -86,7 +91,7 @@ export default {
       const count = Employee.query()
         .where('employee_name', v => v.includes(this.search))
         .count()
-      return Math.floor(count / ITEMS_PER_PAGE) + 1
+      return Math.ceil(count / ITEMS_PER_PAGE)
     }
   },
   created () {
@@ -95,6 +100,12 @@ export default {
       .finally(() => {
         this.loading = false
       })
+  },
+  methods: {
+    remove (id) {
+      this.$store.dispatch('employee/remove', id)
+        .catch(handleApiError)
+    }
   }
 }
 </script>

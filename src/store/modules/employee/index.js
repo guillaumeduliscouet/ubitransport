@@ -50,6 +50,14 @@ export default {
           }
         })
       })
+    },
+    remove (context, id) {
+      return http({
+        method: 'delete',
+        url: `/delete/${id}`
+      }).then(() => {
+        Employee.delete(id)
+      })
     }
   }
 }
