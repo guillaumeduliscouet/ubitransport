@@ -1,14 +1,14 @@
 <template>
-  <div v-if="employee" class="pa-5">
+  <div class="pa-5">
     <h3 class="text-h4 mb-4">
-      Employee #{{ employee.id }}
+      Employee #{{ employeeId }}
     </h3>
     <EditForm
       v-if="isEditing"
       :employee-id="employeeId"
       @close="isEditing = false"
     />
-    <div v-else>
+    <div v-else-if="employee">
       <LabeledInfo
         label="name"
         :content="employee.employee_name"
@@ -21,12 +21,20 @@
       <LabeledInfo
         class="mt-4"
         label="salary"
-        :content="employee.employee_salary"
+        :content="`$ ${employee.employee_salary}`"
       />
     </div>
 
+    <v-progress-linear
+      :active="loading"
+      :indeterminate="true"
+      absolute
+      top
+    />
+
     <v-fab-transition>
       <v-btn
+        v-if="employee"
         :key="activeFab.icon"
         :color="activeFab.color"
         fixed
@@ -53,7 +61,10 @@ export default {
     LabeledInfo,
     EditForm
   },
-  data: () => ({ isEditing: false }),
+  data: () => ({
+    isEditing: false,
+    loading: true
+  }),
   computed: {
     employeeId () {
       return Number(this.$route.params.employeeId)
@@ -70,6 +81,9 @@ export default {
   created () {
     this.$store.dispatch('employee/fetch', this.employeeId)
       .catch(handleApiError)
+      .finally(() => {
+        this.loading = false
+      })
   }
 }
 </script>

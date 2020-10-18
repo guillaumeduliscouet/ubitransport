@@ -16,5 +16,7 @@ export const handleApiError = err => {
   const { isServer, isNetwork, status } = parseApiError(err)
   if (!isNetwork && !isServer) throw err
   if (isNetwork) store.dispatch('snackbar/show', { message: 'Network error, check your internet connection' })
-  if (isServer) store.dispatch('snackbar/show', { message: `Server error ${status}` })
+  if (isServer) {
+    store.dispatch('snackbar/show', { message: `Server error: Request failed with status ${status}` })
+  }
 }

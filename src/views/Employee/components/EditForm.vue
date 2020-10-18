@@ -18,13 +18,14 @@
       v-model="item.employee_salary"
       :rules="[rules.required, rules.salary]"
       label="Salary"
+      prefix="$"
     />
     <v-row>
       <v-spacer />
       <v-btn
         color="success"
         type="submit"
-        :disabled="loading"
+        :loading="loading"
       >
         Save
       </v-btn>
@@ -60,7 +61,7 @@ export default {
   },
   methods: {
     save () {
-      if (!this.$refs.form.validate()) return
+      if (!this.$refs.form.validate() || this.loading) return
       this.loading = true
       this.$store.dispatch('employee/update', {
         id: this.employeeId,

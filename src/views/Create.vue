@@ -19,6 +19,7 @@
       v-model="salary"
       :rules="[rules.required, rules.salary]"
       label="Salary"
+      prefix="$"
     />
     <v-row>
       <v-spacer />
@@ -26,7 +27,7 @@
         class="ml-3"
         color="success"
         type="submit"
-        :disabled="loading"
+        :loading="loading"
       >
         Create employee
       </v-btn>
@@ -49,7 +50,7 @@ export default {
   }),
   methods: {
     save () {
-      if (!this.$refs.form.validate()) return
+      if (!this.$refs.form.validate() || this.loading) return
       this.loading = true
       this.$store.dispatch('employee/create', {
         employee_name: this.name,

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import EmployeesList from '../views/EmployeesList'
 import Create from '../views/Create.vue'
 import Employee from '../views/Employee'
 
@@ -10,7 +10,7 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: EmployeesList
   },
   {
     path: '/create',

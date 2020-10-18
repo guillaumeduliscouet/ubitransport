@@ -12,45 +12,25 @@
         outlined
         hide-details
       />
-      <v-list-item
+      <EmployeesListItem
         v-for="employee in employees"
         :key="employee.id"
-        :to="{ name: 'employee', params: { employeeId: employee.id } }"
-      >
-        <v-list-item-avatar>
-          <v-icon
-            class="grey lighten-1"
-            dark
-          >
-            mdi-account
-          </v-icon>
-        </v-list-item-avatar>
-
-        <v-list-item-content>
-          <v-list-item-title v-text="employee.employee_name" />
-          <v-list-item-subtitle>
-            age: {{ employee.employee_age }} | salary: {{ employee.employee_salary }}
-          </v-list-item-subtitle>
-        </v-list-item-content>
-
-        <v-list-item-action>
-          <v-btn icon>
-            <v-icon
-              color="grey lighten-1"
-              @click.prevent="remove(employee.id)"
-            >
-              mdi-delete
-            </v-icon>
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
+        :employee="employee"
+      />
     </v-list>
 
     <v-pagination
       v-model="page"
       class="pa-3"
       :length="nbPages"
-    ></v-pagination>
+    />
+
+    <v-progress-linear
+      :active="loading"
+      indeterminate
+      absolute
+      top
+    />
 
     <v-btn
       color="success"
@@ -68,21 +48,33 @@
 <script>
 import Employee from '@/store/models/Employee'
 import { handleApiError } from '@/lib/apiError'
+import EmployeesListItem from './components/EmployeesListItem.vue'
 
 const ITEMS_PER_PAGE = 10
 
 export default {
-  name: 'Home',
+  name: 'EmployeesList',
+  components: {
+    EmployeesListItem
+  },
   data: () => ({
     loading: true,
     search: '',
     page: 1
   }),
+  watch: {
+    search () {
+      this.page = 1
+    },
+    nbPages (val) {
+      this.page = Math.min(this.page, this.nbPages)
+    }
+  },
   computed: {
     employees () {
       return Employee.query()
         .where('employee_name', v => v.includes(this.search))
-        .orderBy('employee_name')
+        .orderBy(e => e.employee_name.toLowerCase())
         .limit(ITEMS_PER_PAGE)
         .offset((this.page - 1) * ITEMS_PER_PAGE)
         .get()
@@ -100,12 +92,6 @@ export default {
       .finally(() => {
         this.loading = false
       })
-  },
-  methods: {
-    remove (id) {
-      this.$store.dispatch('employee/remove', id)
-        .catch(handleApiError)
-    }
   }
 }
 </script>

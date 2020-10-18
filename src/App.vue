@@ -1,6 +1,10 @@
 <template>
   <v-app>
-    <v-app-bar app elevate-on-scroll>
+    <v-app-bar
+      app
+      elevate-on-scroll
+      color="blue lighten-3"
+    >
       <v-btn
         :disabled="$route.name === 'home'"
         icon
@@ -14,6 +18,8 @@
       <v-container>
         <v-sheet
           rounded="lg"
+          max-width="600px"
+          class="mx-auto"
         >
           <router-view />
         </v-sheet>
